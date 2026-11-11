@@ -1,91 +1,51 @@
 <!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080d18">
-<title>Xiaomi Tuner 4 Lite · Diagnose</title>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d18"><title>Xiaomi Tuner 4 Lite</title>
 <style>
-:root{color-scheme:dark;--bg:#080d18;--panel:#121e31;--line:#263a59;--muted:#91a5c2;--blue:#35c5ee}
-*{box-sizing:border-box}body{margin:0;padding:24px 16px 50px;background:radial-gradient(circle at top,#172b49,var(--bg) 58%);color:#f4f7ff;font:16px system-ui,-apple-system,sans-serif}
-main{max-width:760px;margin:auto}h1{font-size:32px;margin:4px 0}h2{font-size:20px;margin:0 0 12px}.sub,.muted{color:var(--muted)}.panel{background:#121e31eF;border:1px solid var(--line);border-radius:24px;padding:20px;margin:18px 0}
-button{border:0;border-radius:16px;padding:16px 22px;font-weight:800;font-size:17px;background:linear-gradient(110deg,#36d0ec,#5081ff);color:#06101d;width:100%;margin:10px 0}
-.status{display:flex;align-items:center;gap:10px;color:var(--muted);margin:12px 0}.dot{width:12px;height:12px;border-radius:50%;background:#8793a5}.dot.ok{background:#3ee0a0}.dot.err{background:#ff7373}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#091322;border:1px solid var(--line);border-radius:14px;padding:14px;color:#dce8ff;min-height:70px;font:13px ui-monospace,monospace}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{background:#0b1525;border:1px solid var(--line);border-radius:16px;padding:16px}.tile small{display:block;color:var(--muted);letter-spacing:.08em}.value{font-size:24px;font-weight:800;margin-top:8px}
-@media(max-width:460px){.grid{grid-template-columns:1fr 1fr}.tile{padding:12px}.value{font-size:20px}}
-</style>
-</head>
-<body><main>
-<p class="sub">DIAGNOSE · XIAOMI ELECTRIC SCOOTER 4 LITE (2ND GEN)</p>
-<h1>Xiaomi Tuner 4 Lite</h1>
-<p class="sub">Bluetooth-Diagnose · nur lesender Test</p>
-<section class="panel">
-<h2>Bluetooth-Verbindung</h2>
-<div class="status"><span id="dot" class="dot"></span><span id="status">Noch nicht verbunden</span></div>
-<button id="connect">Echten Scooter suchen</button>
-<p class="muted">Scooter einschalten und nahe ans iPhone stellen. In der Bluetooth-Auswahl den Scooter auswählen, nicht „secure demo“.</p>
-<div id="device" class="muted"></div>
-</section>
-<section class="panel">
-<h2>Live-Daten</h2>
-<div class="grid">
-<div class="tile"><small>AKKU</small><div id="battery" class="value">-- %</div></div>
-<div class="tile"><small>GERÄT</small><div id="model" class="value">--</div></div>
-<div class="tile"><small>HERSTELLER</small><div id="manufacturer" class="value">--</div></div>
-<div class="tile"><small>FIRMWARE</small><div id="firmware" class="value">--</div></div>
-</div>
-<p class="muted">Nicht alle Scooter stellen diese Standarddaten bereit. Geschwindigkeit, Temperatur und Fahrmodus werden hier nicht geraten oder simuliert.</p>
-</section>
-<section class="panel">
-<h2>Gefundene Bluetooth-Dienste</h2>
-<pre id="services">Noch keine Daten. Verbinde zuerst den Scooter.</pre>
-</section>
-<section class="panel">
-<h2>Diagnoseprotokoll</h2>
-<pre id="log">Bereit.</pre>
-</section>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:22px 15px;background:#080d18;color:#f4f7ff;font:16px system-ui}main{max-width:760px;margin:auto}h1{margin:5px 0}small,.muted{color:#9aacc6}.panel{background:#121e31;border:1px solid #263a59;border-radius:20px;padding:18px;margin:16px 0}button{width:100%;padding:15px;border:0;border-radius:14px;margin:7px 0;font-weight:800;font-size:16px;background:#45c6ed;color:#06101d}.secondary{background:#263b59;color:white}.status{margin:12px 0;color:#9aacc6}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#091322;padding:12px;border-radius:12px;font:12px monospace}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:#0b1525;border:1px solid #263a59;border-radius:14px;padding:12px}.value{font-size:18px;font-weight:bold;overflow-wrap:anywhere;margin-top:8px}
+</style></head><body><main>
+<small>BLE-DIAGNOSE 0.3 · XIAOMI ELECTRIC SCOOTER 4 LITE (2ND GEN)</small><h1>Xiaomi Tuner 4 Lite</h1><p class="muted">FE95-Dienst · nur lesende Diagnose</p>
+<section class="panel"><h2>Bluetooth</h2><div id="status" class="status">Noch nicht verbunden</div><button id="connect">Xiaomi Scooter verbinden</button><button id="disconnect" class="secondary" disabled>Verbindung trennen</button><p id="device" class="muted"></p><p class="muted">Wähle xiaomi.scooter.lq4lp, falls angezeigt. Nicht „secure demo“ auswählen.</p></section>
+<section class="panel"><h2>Merkmal 0004</h2><div class="grid"><div class="tile"><small>HEX</small><div id="hex" class="value">--</div></div><div class="tile"><small>TEXT</small><div id="txt" class="value">--</div></div></div></section>
+<section class="panel"><h2>Notify-Daten</h2><pre id="notify">Noch keine Daten.</pre></section>
+<section class="panel"><h2>GATT-Struktur</h2><pre id="services">Noch nicht verbunden.</pre></section>
+<section class="panel"><h2>Protokoll</h2><pre id="log">Bereit. Über HTTPS in Bluefy öffnen.</pre></section>
 </main>
 <script>
-const $=id=>document.getElementById(id);
-let device=null, server=null;
-function log(s){$("log").textContent += "\\n"+s;}
-function state(s,kind=""){ $("status").textContent=s; $("dot").className="dot "+kind; }
-function decode(v){try{return new TextDecoder().decode(v).replace(/\\0/g,"").trim()||"--"}catch(e){return "--"}}
-async function readString(service, characteristic, target){
- try{const c=await service.getCharacteristic(characteristic);const v=await c.readValue();$(target).textContent=decode(v);log(target+": "+decode(v));}
- catch(e){log(target+": nicht verfügbar ("+e.message+")");}}
+const $=x=>document.getElementById(x), S='0000fe95-0000-1000-8000-00805f9b34fb';
+const ids=['00000004-0000-1000-8000-00805f9b34fb','00000005-0000-1000-8000-00805f9b34fb','00000010-0000-1000-8000-00805f9b34fb','00000016-0000-1000-8000-00805f9b34fb','00000017-0000-1000-8000-00805f9b34fb','00000018-0000-1000-8000-00805f9b34fb','0000001a-0000-1000-8000-00805f9b34fb','0000001b-0000-1000-8000-00805f9b34fb','0000001c-0000-1000-8000-00805f9b34fb'];
+let dev,active=[];
+function log(t){$('log').textContent+='\\n'+t}
+function hx(b){return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0').toUpperCase()).join(' ')}
+function txt(b){return new TextDecoder().decode(b).replace(/\\0/g,'').trim()||'(kein Text)'}
+function short(u){return u.slice(4,8)}
 async function connect(){
- if(!navigator.bluetooth){state("Web Bluetooth nicht verfügbar","err");log("Bitte Bluefy verwenden und die Seite über HTTPS öffnen.");return;}
+ if(!navigator.bluetooth){$('status').textContent='Web Bluetooth nicht verfügbar. Bluefy und HTTPS verwenden.';return}
+ $('connect').disabled=true;
  try{
-  $("connect").disabled=true;state("Suche nach echtem Scooter …");log("Bluetooth-Geräteauswahl wird geöffnet.");
-  device=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:["battery_service","device_information"]});
-  $("device").textContent="Ausgewählt: "+(device.name||"Unbenannt")+" · ID: "+device.id;
-  device.addEventListener("gattserverdisconnected",()=>{state("Verbindung getrennt","err");log("GATT-Verbindung getrennt.");});
-  log("Ausgewähltes Gerät: "+(device.name||"Unbenannt"));
-  server=await device.gatt.connect();state("Mit Gerät verbunden","ok");log("GATT-Verbindung hergestellt.");
-  let names=[];
-  try{
-   const svcs=await server.getPrimaryServices();
-   for(const s of svcs){
-    names.push(s.uuid);
-    log("Dienst: "+s.uuid);
-    try{const chars=await s.getCharacteristics();for(const c of chars){log("  Merkmal: "+c.uuid+" | Lesen: "+c.properties.read+" | Schreiben: "+(c.properties.write||c.properties.writeWithoutResponse));}}
-    catch(e){log("  Merkmale nicht lesbar: "+e.message);}
-   }
-  }catch(e){log("Dienste konnten nicht aufgelistet werden: "+e.message);}
-  $("services").textContent=names.length?names.join("\\n"):"Keine freigegebenen Standarddienste gefunden.";
-  try{const b=await server.getPrimaryService("battery_service");const c=await b.getCharacteristic("battery_level");const v=await c.readValue();$("battery").textContent=v.getUint8(0)+" %";log("Akku: "+v.getUint8(0)+" %");}
-  catch(e){log("Akku-Dienst nicht verfügbar: "+e.message);}
-  try{const s=await server.getPrimaryService("device_information");
-   await readString(s,"manufacturer_name_string","manufacturer");
-   await readString(s,"model_number_string","model");
-   await readString(s,"firmware_revision_string","firmware");
-  }catch(e){log("Geräteinformationen nicht verfügbar: "+e.message);}
- }catch(e){state("Keine Verbindung hergestellt","err");log("Fehler: "+e.name+" · "+e.message);}
- finally{$("connect").disabled=false;}
+  $('status').textContent='Bluetooth-Auswahl geöffnet …';
+  dev=await navigator.bluetooth.requestDevice({filters:[{services:[S]}],optionalServices:[S]});
+  $('device').textContent='Gerät: '+(dev.name||'Unbenannt');
+  dev.addEventListener('gattserverdisconnected',()=>{$('status').textContent='Getrennt';$('disconnect').disabled=true});
+  const server=await dev.gatt.connect();$('status').textContent='Verbunden';$('disconnect').disabled=false;log('GATT verbunden.');
+  const svc=await server.getPrimaryService(S);log('FE95 gefunden.');
+  const lines=[];
+  for(const id of ids){
+   try{
+    const c=await svc.getCharacteristic(id),p=c.properties;
+    lines.push(short(c.uuid)+' · Read '+p.read+' · Notify '+p.notify+' · Write '+(p.write||p.writeWithoutResponse));
+    log('Merkmal '+short(c.uuid)+' gefunden.');
+    if(short(c.uuid)==='0004'&&p.read){const v=await c.readValue();$('hex').textContent=hx(v.buffer);$('txt').textContent=txt(v.buffer);log('0004 gelesen: '+hx(v.buffer))}
+    if(p.notify||p.indicate){
+     c.addEventListener('characteristicvaluechanged',e=>{const b=e.target.value.buffer;$('notify').textContent=short(e.target.uuid)+' | '+hx(b)+' | '+txt(b)+'\\n'+$('notify').textContent;log('Notify '+short(e.target.uuid)+': '+hx(b))});
+     try{await c.startNotifications();active.push(c);log('Notify aktiviert: '+short(c.uuid))}catch(e){log('Notify nicht möglich '+short(c.uuid)+': '+e.message)}
+    }
+   }catch(e){lines.push(id.slice(4,8)+' · nicht gefunden/freigegeben')}
+  }
+  $('services').textContent=lines.join('\\n');log('Fertig. Keine Schreibbefehle gesendet.')
+ }catch(e){$('status').textContent='Fehler: '+e.message;log(e.name+': '+e.message)}
+ finally{$('connect').disabled=false}
 }
-$("connect").addEventListener("click",connect);
-if(!window.isSecureContext) {state("HTTPS erforderlich","err");log("Diese Seite muss über HTTPS geöffnet werden.");}
-</script>
-</body></html>
+$('connect').onclick=connect;
+$('disconnect').onclick=async()=>{for(const c of active){try{await c.stopNotifications()}catch(e){}}active=[];if(dev?.gatt?.connected)dev.gatt.disconnect();$('status').textContent='Getrennt';$('disconnect').disabled=true};
+if(!isSecureContext){$('status').textContent='HTTPS erforderlich'}
+</script></body></html>
