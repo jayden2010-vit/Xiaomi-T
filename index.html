@@ -1,47 +1,91 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#111827"><title>Xiaomi Tuner 4 Lite · Diagnose 0.4</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xiaomi Tuner 4 Lite</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:22px;font-family:system-ui,-apple-system,sans-serif;background:#0b1220;color:#eef2ff}.wrap{max-width:650px;margin:auto}.card{background:#151f32;border:1px solid #2c3b55;border-radius:18px;padding:18px;margin:14px 0}h1{font-size:1.55rem;margin:0 0 6px}p{color:#c2cce0;line-height:1.5}.small{font-size:.9rem;color:#9eacc4}button{border:0;border-radius:12px;padding:13px 17px;font-weight:700;font-size:1rem;background:#72e0bd;color:#08251d;margin:5px 5px 5px 0}button.secondary{background:#33445f;color:#eef2ff}button:disabled{opacity:.5}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1220;border-radius:10px;padding:12px;min-height:100px;color:#b9f5df}.value{font-size:1.2rem;font-weight:700;color:#72e0bd}.warn{color:#ffd28a}
-</style></head>
-<body><main class="wrap">
-<h1>Xiaomi Tuner 4 Lite</h1><p class="small">BLE-Diagnose · Version 0.4 · Nur Lesezugriff</p>
-<div class="card"><h2>Bluetooth-Verbindung</h2><p>Diese Version sucht ohne FE95-Gerätefilter. Wähle in der Liste <b>xiaomi.scooter.lq4lp</b>, falls es angezeigt wird.</p><button id="connect">Bluetooth-Gerät suchen</button> <button id="disconnect" class="secondary" disabled>Trennen</button><p id="status">Noch nicht verbunden.</p><p class="small warn">Hinweis: Bluefy muss Bluetooth unterstützen und die Berechtigung erlauben. Xiaomi Home nicht entkoppeln oder zurücksetzen.</p></div>
-<div class="card"><h2>Roller-Daten</h2><div class="small">Wert von FE95 / 0004</div><div id="version" class="value">Noch nicht gelesen</div><p class="small">Erwarteter bisheriger Wert: 2.6.0_0060</p></div>
-<div class="card"><h2>Diagnoseprotokoll</h2><pre id="log">Bereit.</pre><button id="clear" class="secondary">Protokoll leeren</button></div>
-<div class="card"><p class="small">Sicherheit: Diese Diagnose liest nur die Eigenschaft 0004 und abonniert verfügbare Benachrichtigungen. Es werden keine Schreibbefehle und keine Firmwareänderungen gesendet.</p></div>
-</main>
+body {
+background: #10151d;
+color: white;
+font-family: Arial, sans-serif;
+padding: 20px;
+}
+.card {
+background: #202a37;
+padding: 18px;
+border-radius: 14px;
+margin: 15px 0;
+}
+button {
+background: #36c98f;
+color: #10151d;
+border: 0;
+border-radius: 10px;
+padding: 14px;
+font-weight: bold;
+width: 100%;
+margin-top: 10px;
+}
+small { color: #b8c4d2; }
+#log { white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<h1>🛴 Xiaomi Tuner 4 Lite</h1>
+<p>Bluetooth Diagnose – Version 0.5</p>
+<div class="card">
+<h3>Verbindung</h3>
+<p id="status">Noch nicht verbunden</p>
+<button id="connect">Bluetooth verbinden</button>
+</div>
+<div class="card">
+<h3>Roller-Informationen</h3>
+<p>Gerät: <span id="device">Noch unbekannt</span></p>
+<p>Version: <span id="version">Noch unbekannt</span></p>
+</div>
+<div class="card">
+<h3>Diagnose</h3>
+<pre id="log">Bereit.</pre>
+</div>
 <script>
-const SERVICE='0000fe95-0000-1000-8000-00805f9b34fb';
-const VERSION='00000004-0000-1000-8000-00805f9b34fb';
-const CHARS=['00000005-0000-1000-8000-00805f9b34fb','00000010-0000-1000-8000-00805f9b34fb','00000016-0000-1000-8000-00805f9b34fb','00000017-0000-1000-8000-00805f9b34fb','00000018-0000-1000-8000-00805f9b34fb','0000001a-0000-1000-8000-00805f9b34fb','0000001b-0000-1000-8000-00805f9b34fb','0000001c-0000-1000-8000-00805f9b34fb'];
-let device=null,server=null;
-const $=id=>document.getElementById(id);
-function log(s){$('log').textContent+=`\n${new Date().toLocaleTimeString()}  ${s}`}
-function setStatus(s){$('status').textContent=s;log(s)}
-function decode(v){let a=new Uint8Array(v.buffer,v.byteOffset,v.byteLength);return [...a].map(x=>x.toString(16).padStart(2,'0')).join(' ').toUpperCase()}
-$('connect').onclick=async()=>{
- if(!navigator.bluetooth){setStatus('Web Bluetooth wird von diesem Browser nicht unterstützt.');return}
- try{
-  setStatus('Bluetooth-Auswahl wird geöffnet …');
-  device=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SERVICE]});
-  log('Ausgewählt: '+(device.name||'Unbekanntes Gerät'));
-  device.addEventListener('gattserverdisconnected',()=>{setStatus('Verbindung getrennt.');$('disconnect').disabled=true});
-  setStatus('Verbinde mit '+(device.name||'Gerät')+' …');
-  server=await device.gatt.connect();$('disconnect').disabled=false;
-  setStatus('Verbunden. Suche FE95 …');
-  const service=await server.getPrimaryService(SERVICE);
-  const c=await service.getCharacteristic(VERSION);
-  const value=await c.readValue();
-  const bytes=new Uint8Array(value.buffer,value.byteOffset,value.byteLength);
-  const ascii=String.fromCharCode(...bytes).replace(/\0+$/,'');
-  $('version').textContent=ascii||decode(value);log('0004 HEX: '+decode(value));log('0004 Text: '+ascii);
-  for(const uuid of CHARS){try{const ch=await service.getCharacteristic(uuid);if(ch.properties.notify||ch.properties.indicate){await ch.startNotifications();ch.addEventListener('characteristicvaluechanged',e=>log(uuid.slice(4,8)+' Benachrichtigung HEX: '+decode(e.target.value)));log(uuid.slice(4,8)+' Benachrichtigungen aktiviert.')}}catch(e){log(uuid.slice(4,8)+' nicht lesbar/keine Benachrichtigung: '+e.message)}}
-  setStatus('Verbunden mit '+(device.name||'Gerät')+'. Diagnose läuft.');
- }catch(e){setStatus('Fehler: '+e.message);log('Fehlername: '+e.name)}
-};
-$('disconnect').onclick=()=>{if(device?.gatt?.connected)device.gatt.disconnect();$('disconnect').disabled=true};
-$('clear').onclick=()=>$('log').textContent='Bereit.';
-</script></body></html>
+const SERVICE = "0000fe95-0000-1000-8000-00805f9b34fb";
+const CHAR = "00000004-0000-1000-8000-00805f9b34fb";
+const statusEl = document.getElementById("status");
+const deviceEl = document.getElementById("device");
+const versionEl = document.getElementById("version");
+const logEl = document.getElementById("log");
+function log(text) {
+logEl.textContent += "\n" + text;
+}
+document.getElementById("connect").addEventListener("click", async () => {
+try {
+if (!navigator.bluetooth) {
+throw new Error("Bluetooth wird von diesem Browser nicht unterstützt.");
+}
+statusEl.textContent = "Bluetooth-Auswahl wird geöffnet …";
+const device = await navigator.bluetooth.requestDevice({
+acceptAllDevices: true,
+optionalServices: [SERVICE]
+});
+deviceEl.textContent = device.name || "Unbekanntes Gerät";
+log("Ausgewählt: " + device.name);
+statusEl.textContent = "Verbinde …";
+const server = await device.gatt.connect();
+statusEl.textContent = "Verbunden";
+const service = await server.getPrimaryService(SERVICE);
+const characteristic = await service.getCharacteristic(CHAR);
+const value = await characteristic.readValue();
+const bytes = new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
+const version = new TextDecoder().decode(bytes).replace(/\0/g, "").trim();
+versionEl.textContent = version || "Kein Wert";
+log("FE95 erfolgreich gelesen.");
+log("Version: " + version);
+} catch (error) {
+statusEl.textContent = "Verbindung fehlgeschlagen";
+log("Fehler: " + error.message);
+}
+});
+</script>
+</body>
+</html>
