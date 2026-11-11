@@ -22,31 +22,36 @@ background: #36c98f;
 color: #10151d;
 border: 0;
 border-radius: 10px;
-padding: 14px;
+padding: 15px;
 font-weight: bold;
 width: 100%;
 margin-top: 10px;
+font-size: 16px;
+}
+#log {
+white-space: pre-wrap;
+overflow-wrap: anywhere;
+font-size: 13px;
 }
 small { color: #b8c4d2; }
-#log { white-space: pre-wrap; overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
 <h1>🛴 Xiaomi Tuner 4 Lite</h1>
-<p>Bluetooth Diagnose – Version 0.5</p>
+<p>Version 0.6 – Echte Roller-Suche</p>
 <div class="card">
-<h3>Verbindung</h3>
+<h3>Bluetooth-Verbindung</h3>
 <p id="status">Noch nicht verbunden</p>
-<button id="connect">Bluetooth verbinden</button>
+<button id="connect">Xiaomi-Roller suchen</button>
 </div>
 <div class="card">
 <h3>Roller-Informationen</h3>
-<p>Gerät: <span id="device">Noch unbekannt</span></p>
-<p>Version: <span id="version">Noch unbekannt</span></p>
+<p>Gerät: <span id="device">Unbekannt</span></p>
+<p>Software-Version: <span id="version">Unbekannt</span></p>
 </div>
 <div class="card">
 <h3>Diagnose</h3>
-<pre id="log">Bereit.</pre>
+<pre id="log">Bereit für die Suche.</pre>
 </div>
 <script>
 const SERVICE = "0000fe95-0000-1000-8000-00805f9b34fb";
@@ -55,35 +60,57 @@ const statusEl = document.getElementById("status");
 const deviceEl = document.getElementById("device");
 const versionEl = document.getElementById("version");
 const logEl = document.getElementById("log");
-function log(text) {
-logEl.textContent += "\n" + text;
+function log(message) {
+logEl.textContent += "\n" + message;
 }
 document.getElementById("connect").addEventListener("click", async () => {
 try {
+logEl.textContent = "Suche nach echtem Xiaomi-Roller ...";
+deviceEl.textContent = "Unbekannt";
+versionEl.textContent = "Unbekannt";
 if (!navigator.bluetooth) {
-throw new Error("Bluetooth wird von diesem Browser nicht unterstützt.");
+throw new Error("Dieser Browser unterstützt Bluetooth nicht.");
 }
-statusEl.textContent = "Bluetooth-Auswahl wird geöffnet …";
+statusEl.textContent = "Suche läuft ...";
 const device = await navigator.bluetooth.requestDevice({
-acceptAllDevices: true,
+filters: [
+{ namePrefix: "xiaomi" }
+],
 optionalServices: [SERVICE]
 });
-deviceEl.textContent = device.name || "Unbekanntes Gerät";
-log("Ausgewählt: " + device.name);
-statusEl.textContent = "Verbinde …";
+if (!device.name ||
+!device.name.toLowerCase().startsWith("xiaomi")) {
+throw new Error("Das ausgewählte Gerät ist kein Xiaomi-Roller.");
+}
+deviceEl.textContent = device.name;
+log("Gefunden: " + device.name);
+statusEl.textContent = "Verbinde mit Roller ...";
 const server = await device.gatt.connect();
-statusEl.textContent = "Verbunden";
+log("Bluetooth-Verbindung hergestellt.");
+statusEl.textContent = "Suche Roller-Daten ...";
 const service = await server.getPrimaryService(SERVICE);
 const characteristic = await service.getCharacteristic(CHAR);
 const value = await characteristic.readValue();
-const bytes = new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
-const version = new TextDecoder().decode(bytes).replace(/\0/g, "").trim();
+const bytes = new Uint8Array(
+value.buffer,
+value.byteOffset,
+value.byteLength
+);
+const version = new TextDecoder()
+.decode(bytes)
+.replace(/\0/g, "")
+.trim();
 versionEl.textContent = version || "Kein Wert";
 log("FE95 erfolgreich gelesen.");
-log("Version: " + version);
+log("Software-Version: " + version);
+statusEl.textContent = "Roller verbunden!";
 } catch (error) {
 statusEl.textContent = "Verbindung fehlgeschlagen";
-log("Fehler: " + error.message);
+log("Fehlername: " + (error.name || "Unbekannt"));
+log("Fehlermeldung: " + (error.message || "Keine Details"));
+if (error.name === "NotFoundError") {
+log("Kein passender Xiaomi-Roller gefunden.");
+}
 }
 });
 </script>
