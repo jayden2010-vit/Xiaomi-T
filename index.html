@@ -1,118 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
 <title>Xiaomi Tuner 4 Lite</title>
 <style>
-body {
-background: #10151d;
-color: white;
-font-family: Arial, sans-serif;
-padding: 20px;
-}
-.card {
-background: #202a37;
-padding: 18px;
-border-radius: 14px;
-margin: 15px 0;
-}
-button {
-background: #36c98f;
-color: #10151d;
-border: 0;
-border-radius: 10px;
-padding: 15px;
-font-weight: bold;
-width: 100%;
-margin-top: 10px;
-font-size: 16px;
-}
-#log {
-white-space: pre-wrap;
-overflow-wrap: anywhere;
-font-size: 13px;
-}
-small { color: #b8c4d2; }
+:root{color-scheme:dark;--bg:#0b1220;--panel:#141f31;--panel2:#19273c;--line:#293950;--muted:#9aabc2;--text:#f4f7fb;--blue:#56a8ff;--cyan:#5de1d2;--amber:#ffc66d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -10%,#18385b 0,transparent 42%),var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:900px;margin:auto;padding:24px 18px 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#348dff,#42d5c6);display:grid;place-items:center;color:#071321;font-size:23px;font-weight:900}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:.13em;text-transform:uppercase}.brand h1{font-size:20px;margin:2px 0 0}.version{font-size:12px;color:#b8c9dc;border:1px solid var(--line);padding:6px 9px;border-radius:99px;white-space:nowrap}
+.hero{background:linear-gradient(120deg,rgba(48,132,220,.22),rgba(93,225,210,.08)),var(--panel);border:1px solid #31506d;border-radius:22px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:180px;height:180px;border:1px solid #ffffff12;border-radius:50%;right:-55px;top:-75px;box-shadow:0 0 0 22px #ffffff08,0 0 0 44px #ffffff05}.hero-top{display:flex;justify-content:space-between;align-items:center;gap:12px;position:relative;z-index:1}.hero h2{font-size:22px;margin:0 0 5px}.hero p{color:#bdcce0;margin:0;font-size:14px}.status{display:inline-flex;align-items:center;gap:7px;background:#332a1b;color:#ffd58e;border:1px solid #73572b;padding:7px 10px;border-radius:99px;font-size:12px;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}.scooter{width:100%;height:110px;margin-top:10px;position:relative;z-index:1}.scooter svg{width:100%;height:100%;overflow:visible}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;min-height:130px}.card-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}.ico{font-size:19px}.value{font-size:28px;font-weight:750;letter-spacing:-.03em;margin:12px 0 2px}.sub{font-size:12px;color:var(--muted)}.pending{color:#a9b9ce}.section{margin-top:22px}.section h3{font-size:16px;margin:0 0 10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row strong{font-size:14px}.row small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.tag{font-size:12px;color:#b9d8ff;background:#1b3552;border:1px solid #2e5278;padding:5px 8px;border-radius:8px;white-space:nowrap}.tag.good{color:#9ff1df;background:#163b39;border-color:#28635e}.note{margin-top:14px;padding:13px 15px;border-radius:14px;background:#172b3a;border:1px solid #2a5362;color:#c6dce7;font-size:13px}.note b{color:#fff}.footer{margin-top:24px;text-align:center;color:#71839b;font-size:11px}.pill{display:inline-block;padding:3px 8px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:11px;margin-left:6px}
+@media(min-width:650px){main{padding:34px 26px 56px}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{padding:26px 30px}.hero h2{font-size:25px}}
 </style>
 </head>
 <body>
-<h1>🛴 Xiaomi Tuner 4 Lite</h1>
-<p>Version 0.6 – Echte Roller-Suche</p>
-<div class="card">
-<h3>Bluetooth-Verbindung</h3>
-<p id="status">Noch nicht verbunden</p>
-<button id="connect">Xiaomi-Roller suchen</button>
-</div>
-<div class="card">
-<h3>Roller-Informationen</h3>
-<p>Gerät: <span id="device">Unbekannt</span></p>
-<p>Software-Version: <span id="version">Unbekannt</span></p>
-</div>
-<div class="card">
-<h3>Diagnose</h3>
-<pre id="log">Bereit für die Suche.</pre>
-</div>
-<script>
-const SERVICE = "0000fe95-0000-1000-8000-00805f9b34fb";
-const CHAR = "00000004-0000-1000-8000-00805f9b34fb";
-const statusEl = document.getElementById("status");
-const deviceEl = document.getElementById("device");
-const versionEl = document.getElementById("version");
-const logEl = document.getElementById("log");
-function log(message) {
-logEl.textContent += "\n" + message;
-}
-document.getElementById("connect").addEventListener("click", async () => {
-try {
-logEl.textContent = "Suche nach echtem Xiaomi-Roller ...";
-deviceEl.textContent = "Unbekannt";
-versionEl.textContent = "Unbekannt";
-if (!navigator.bluetooth) {
-throw new Error("Dieser Browser unterstützt Bluetooth nicht.");
-}
-statusEl.textContent = "Suche läuft ...";
-const device = await navigator.bluetooth.requestDevice({
-filters: [
-{ namePrefix: "xiaomi" }
-],
-optionalServices: [SERVICE]
-});
-if (!device.name ||
-!device.name.toLowerCase().startsWith("xiaomi")) {
-throw new Error("Das ausgewählte Gerät ist kein Xiaomi-Roller.");
-}
-deviceEl.textContent = device.name;
-log("Gefunden: " + device.name);
-statusEl.textContent = "Verbinde mit Roller ...";
-const server = await device.gatt.connect();
-log("Bluetooth-Verbindung hergestellt.");
-statusEl.textContent = "Suche Roller-Daten ...";
-const service = await server.getPrimaryService(SERVICE);
-const characteristic = await service.getCharacteristic(CHAR);
-const value = await characteristic.readValue();
-const bytes = new Uint8Array(
-value.buffer,
-value.byteOffset,
-value.byteLength
-);
-const version = new TextDecoder()
-.decode(bytes)
-.replace(/\0/g, "")
-.trim();
-versionEl.textContent = version || "Kein Wert";
-log("FE95 erfolgreich gelesen.");
-log("Software-Version: " + version);
-statusEl.textContent = "Roller verbunden!";
-} catch (error) {
-statusEl.textContent = "Verbindung fehlgeschlagen";
-log("Fehlername: " + (error.name || "Unbekannt"));
-log("Fehlermeldung: " + (error.message || "Keine Details"));
-if (error.name === "NotFoundError") {
-log("Kein passender Xiaomi-Roller gefunden.");
-}
-}
-});
-</script>
+<main>
+  <header class="top">
+    <div class="brand"><div class="logo">4L</div><div><div class="eyebrow">Scooter companion</div><h1>Xiaomi Tuner 4 Lite</h1></div></div>
+    <div class="version">V 0.7 · Dashboard</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-top"><div><h2>Dein Roller</h2><p>Xiaomi Electric Scooter 4 Lite (2nd Gen)</p></div><div class="status"><span class="dot"></span>Nicht verbunden</div></div>
+    <div class="scooter" aria-hidden="true">
+      <svg viewBox="0 0 560 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="116" cy="96" r="27" stroke="#8FB8DD" stroke-width="8"/><circle cx="116" cy="96" r="5" fill="#8FB8DD"/>
+        <circle cx="430" cy="96" r="27" stroke="#8FB8DD" stroke-width="8"/><circle cx="430" cy="96" r="5" fill="#8FB8DD"/>
+        <path d="M116 96 L150 77 L389 77 L430 96 M150 77 L172 96 M389 77 L397 28 L423 28" stroke="#DCEBFA" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M405 28 H447" stroke="#DCEBFA" stroke-width="8" stroke-linecap="round"/><path d="M150 77 L139 62" stroke="#DCEBFA" stroke-width="7" stroke-linecap="round"/>
+        <path d="M174 68 H365" stroke="#56A8FF" stroke-width="4" stroke-linecap="round"/><path d="M397 28 L390 17" stroke="#56A8FF" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="grid" aria-label="Rollerwerte">
+    <article class="card"><div class="card-head"><span>Akku</span><span class="ico">▰</span></div><div class="value pending">-- %</div><div class="sub">Noch nicht ausgelesen</div></article>
+    <article class="card"><div class="card-head"><span>Geschwindigkeit</span><span class="ico">◉</span></div><div class="value pending">-- km/h</div><div class="sub">Noch nicht ausgelesen</div></article>
+    <article class="card"><div class="card-head"><span>Fahrmodus</span><span class="ico">⚙</span></div><div class="value pending">--</div><div class="sub">Noch nicht erkannt</div></article>
+    <article class="card"><div class="card-head"><span>Temperatur</span><span class="ico">♨</span></div><div class="value pending">-- °C</div><div class="sub">Noch nicht ausgelesen</div></article>
+  </section>
+
+  <section class="section">
+    <h3>Letzte bekannte Bluetooth-Diagnose</h3>
+    <div class="panel">
+      <div class="row"><div><strong>Gerätename</strong><small>In nRF Connect gefunden</small></div><span class="tag good">xiaomi.scooter.lq4lp</span></div>
+      <div class="row"><div><strong>Bluetooth-Dienst</strong><small>Beim Verbinden entdeckt</small></div><span class="tag">FE95</span></div>
+      <div class="row"><div><strong>Ausgelesener Wert · 0004</strong><small>Lesen war erfolgreich</small></div><span class="tag good">2.6.0_0060</span></div>
+      <div class="row"><div><strong>Live-Daten</strong><small>Akku, Tempo und Fahrmodus</small></div><span class="tag">Noch offen</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h3>Fahrmodi & Einstellungen</h3>
+    <div class="panel">
+      <div class="row"><div><strong>Fahrmodus anzeigen</strong><small>Wird verfügbar, sobald der Roller passende Daten liefert</small></div><span class="tag">In Vorbereitung</span></div>
+      <div class="row"><div><strong>Beschleunigung</strong><small>Unterstützung für dieses Modell noch ungeklärt</small></div><span class="tag">Nicht verfügbar</span></div>
+    </div>
+  </section>
+
+  <div class="note"><b>Hinweis:</b> Diese Version ist zunächst das Dashboard. Die angezeigten Striche sind absichtlich leer. Es werden keine Werte erfunden und es werden keine Befehle an deinen Roller gesendet.</div>
+  <div class="footer">Xiaomi Tuner 4 Lite · V 0.7 · Lokale Dashboard-Vorschau</div>
+</main>
 </body>
 </html>
